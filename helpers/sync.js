@@ -12,9 +12,9 @@ export const syncBlockChain = async()=>{
         console.log("responseCrash:",responseCrash)
         let currentBlock = -1;
         console.log("response",response)
-        if(response !== null && response!=="" && !responseCrash){
+        if(response !== null && response!=="" && responseCrash  !== null){
             currentBlock = response.number;
-        }else{
+        }else if(responseCrash !== null){
             let previousCrash = await Block.find({ "_id": { "$lt": ObjectId(responseCrash.id) }}).sort({ "_id": -1 }).limit(1)//get the previous record of the given id
             console.log("previousCrash:",previousCrash);
             currentBlock = previousCrash.number;
@@ -22,6 +22,8 @@ export const syncBlockChain = async()=>{
             console.log("currentBlock:",currentBlock)
             await Block.deleteMany({ $or: [{number: {$gt: currentBlock}},{hash:""}]})
             await Transaction.deleteMany({$or: [{blockNumber: {$gt: currentBlock}},{blockHash:""}]})
+        }else{
+
         }
         let latestBlock= await getBlock('latest')
         console.log("currentBlock",currentBlock)
@@ -79,7 +81,7 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
     console.log("blockToDB:",newBlock.number);
     block =  await Block.create(newBlock);
     console.log("blockFromBD:",block.number);
-    if(!block.number){
+    if(block.hash === ""){
         process.exit(1);
     }
 }
