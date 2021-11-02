@@ -1,6 +1,6 @@
 import Web3 from 'web3';
-import {blockAndTransactionToDB} from './sync.js'
-    import {MAIN_NET_WS} from '../config'
+import {blockAndTransactionToDB} from './sync'
+import {MAIN_NET_WS} from '../config'
 
 
 const web3 = new Web3(new Web3.providers.WebsocketProvider(MAIN_NET_WS));
