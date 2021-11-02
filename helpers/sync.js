@@ -12,7 +12,7 @@ export const syncBlockChain = async()=>{
         console.log("responseCrash:",responseCrash)
         let currentBlock = -1;
         console.log("response",response)
-        if(response !== null && response!=="" && responseCrash  !== null){
+        if(response !== null && response!=="" && responseCrash  === null){
             currentBlock = response.number;
         }else if(responseCrash !== null){
             let previousCrash = await Block.find({ "_id": { "$lt": ObjectId(responseCrash.id) }}).sort({ "_id": -1 }).limit(1)//get the previous record of the given id
