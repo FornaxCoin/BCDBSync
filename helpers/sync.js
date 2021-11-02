@@ -49,8 +49,9 @@ export const downloadBlockChain = async (fromBlockNumber,toBlockNumber) =>{
 
 export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
     let block = await getBlock(blockNumberOrBlockHash.toString());
+    console.log("blockDownloaded:", block.number)
     let newBlock = new Block;
-    newBlock={
+    newBlock = {
         ...block
     };
     // console.log("newBlocktransactions:",newBlock.transactions)
@@ -79,9 +80,9 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
         }
     })()
     console.log("blockToDB:",newBlock.number);
-    block =  await Block.create(newBlock);
-    console.log("blockFromBD:",block.number);
-    if(block.hash === ""){
+    let blockReturn =  await Block.create(newBlock);
+    console.log("blockFromBD:",blockReturn.number);
+    if(blockReturn.hash === ""){
         process.exit(1);
     }
 }

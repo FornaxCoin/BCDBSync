@@ -18,7 +18,7 @@ export const subscribeBlock=async ()=>{
             console.log(subscriptionId);
         })
         .on("data", function(blockHeader){
-            console.log(blockHeader);
+            console.log("blockHeader:",blockHeader);
             (async()=>{
                 await blockAndTransactionToDB(blockHeader.number);
             })()
