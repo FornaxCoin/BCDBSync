@@ -1,17 +1,27 @@
 import {getBlock, getTransaction, getTransactionReceipt} from './Web3Wrapper.js'
 import {Block,Transaction} from "../models/index.js";
 import {subscribeBlock} from "./Web3WebSocket.js"
-
+var ObjectId = require('mongodb').ObjectID;
 
 export const syncBlockChain = async()=>{
 
     while(true){
         console.log("inloop")
         let response = await Block.findOne({}).sort('-number')
+        let responseCrash = await Block.findOne({hash:""})
+        console.log("responseCrash:",responseCrash)
         let currentBlock = -1;
         console.log("response",response)
-        if(response !== null && response!==""){
+        if(response !== null && response!=="" && !responseCrash){
             currentBlock = response.number;
+        }else{
+            let previousCrash = await Block.find({ "_id": { "$lt": ObjectId(responseCrash.id) }}).sort({ "_id": -1 }).limit(1)//get the previous record of the given id
+            console.log("previousCrash:",previousCrash);
+            currentBlock = previousCrash.number;
+            currentBlock = currentBlock - 1;
+            console.log("currentBlock:",currentBlock)
+            await Block.deleteMany({ $or: [{number: {$gt: currentBlock}},{hash:""}]})
+            await Transaction.deleteMany({$or: [{blockNumber: {$gt: currentBlock}},{blockHash:""}]})
         }
         let latestBlock= await getBlock('latest')
         console.log("currentBlock",currentBlock)
@@ -48,13 +58,9 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
         if(transactionsArray!=null){
             let receipt
             await (async () =>{
-                console.log("transactionsArray",transactionsArray)
                 for(let transactionHash of transactionsArray ){
-                    console.log("transactionHash",transactionHash);
                     receipt = await getTransactionReceipt(transactionHash)
-                    console.log("Mylogs:",receipt.logs);
                     let transaction = await getTransaction(transactionHash);
-                    console.log("transactionWeb3:",transaction);
                     let newTransaction = new Transaction({
                         ...receipt,
                         value: transaction.value,
@@ -62,16 +68,20 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
                         gasPrice: transaction.gasPrice,
                         input:transaction.input,
                     });
-                    console.log("Transactiondata:",newTransaction);
+                    console.log("transactionToDB:",newTransaction.transactionHash);
                     let response = await newTransaction.save();
-                    console.log('transactionResponse:',response);
+                    console.log('transactionFromDB:',response.transactionHash);
                     newBlock.transactions.push(response._id);
                 }
             })()
         }
     })()
-    console.log("block:",newBlock);
-    await Block.create(newBlock);
+    console.log("blockToDB:",newBlock.number);
+    block =  await Block.create(newBlock);
+    console.log("blockFromBD:",block.number);
+    if(!block.number){
+        process.exit(1);
+    }
 }
 
 

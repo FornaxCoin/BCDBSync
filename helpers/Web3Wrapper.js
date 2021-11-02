@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import {MAIN_NET_HTTP} from '../config/index.js'
+import {MAIN_NET_HTTP} from '../config'
 
 
 export const web3 = new Web3(MAIN_NET_HTTP);
