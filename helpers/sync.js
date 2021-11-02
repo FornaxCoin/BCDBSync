@@ -54,7 +54,7 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
         console.log("blockDownloaded:", block.number)
     }else{
         block = await getBlock(blockNumberOrBlockHash.toString());
-        console.log("blockReDownloaded:", block.number)
+        console.log("blockReDownloaded:", blockNumberOrBlockHash)
     }
     let newBlock = new Block;
     newBlock = {
