@@ -48,8 +48,14 @@ export const downloadBlockChain = async (fromBlockNumber,toBlockNumber) =>{
 }
 
 export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
+    console.log("Downloading:",blockNumberOrBlockHash)
     let block = await getBlock(blockNumberOrBlockHash.toString());
-    console.log("blockDownloaded:", block.number)
+    if(block){
+        console.log("blockDownloaded:", block.number)
+    }else{
+        block = await getBlock(blockNumberOrBlockHash.toString());
+        console.log("blockReDownloaded:", block.number)
+    }
     let newBlock = new Block;
     newBlock = {
         ...block
