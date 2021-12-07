@@ -16,6 +16,10 @@ const transactionSchema = new Schema({
         type:String,
         default:""
     },
+    timestamp: {
+        type:Number,
+        default:null
+    },
     blockNumber: {
         type:Number,
         default:null

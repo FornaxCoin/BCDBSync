@@ -76,6 +76,7 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
                         nonce: transaction.nonce,
                         gasPrice: transaction.gasPrice,
                         input:transaction.input,
+                        timestamp:newBlock.timestamp,
                     });
                     console.log("transactionToDB:",newTransaction.transactionHash);
                     let response = await newTransaction.save();
@@ -89,7 +90,7 @@ export const blockAndTransactionToDB = async(blockNumberOrBlockHash)=>{
     let blockReturn =  await Block.create(newBlock);
     console.log("blockFromBD:",blockReturn.number);
     if(blockReturn.hash === ""){
-        process.exit(1);
+        process.exit(13936);
     }
 }
 
