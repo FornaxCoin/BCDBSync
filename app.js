@@ -16,6 +16,10 @@ const db = getConnection();
 db.on('error', console.error.bind(console, '❌ connection error:'))
 db.once('open', () => {
   console.log(' 🍃 connected to mongoDB mLab');
+  (async()=>{
+    console.log("hello")
+    await syncBlockChain();
+  })()
 })
 
 var app = express();
@@ -55,9 +59,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-(async()=>{
-  console.log("hello")
-  await syncBlockChain();
-})()
 
 module.exports = app;
