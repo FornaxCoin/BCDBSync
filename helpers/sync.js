@@ -107,7 +107,7 @@ export const blockAndTransactionToDB = async (blockNumberOrBlockHash) => {
                         console.log("fetching Transaction Again")
                         transaction = await getTransaction(transactionHash);
                     }
-                    console.log("transactionFromBlockchain:", transaction)
+                    console.log("transactionFromBlockchain:", transaction.hash)
                     let newTransaction = new Transaction({
                         ...receipt,
                         value: transaction.value,
