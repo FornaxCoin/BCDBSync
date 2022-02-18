@@ -3,7 +3,6 @@ import {MAIN_NET_HTTP} from '../config'
 
 
 export const web3 = new Web3(MAIN_NET_HTTP);
-console.log("web3:", web3);
 
 
 export const getBalance = async(address)=>{

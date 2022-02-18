@@ -12,46 +12,58 @@ export const syncBlockChain = async () => {
         let responseCrash = await Block.findOne({hash: ""})
         let crashTxn = await Transaction.findOne({transactionHash: ""})
         console.log("responseCrash:", responseCrash)
+        console.log("crashTxn:", crashTxn)
         let currentBlock = -1;
         console.log("response", response)
         if (response !== null && response !== "" && responseCrash === null) {
+            console.log("error:1")
             currentBlock = response.number;
             if (crashTxn !== null) {
+                console.log("error:11")
                 let previousCrashTxn = await Transaction.findOne({"_id": {"$lt": ObjectId(crashTxn.id)}}).sort({"_id": -1}).limit(1)//get the previous record of the given id
                 currentBlock = parseInt(previousCrashTxn.blockNumber);
                 currentBlock = currentBlock - 1;
+                console.log("currentBlock:",currentBlock)
                 await Block.deleteMany({$or: [{number: {$gt: currentBlock}}, {hash: ""}]})
                 await Transaction.deleteMany({$or: [{blockNumber: {$gt: currentBlock}}, {blockHash: ""}]})
             }
         } else if (responseCrash !== null) {
+            console.log("error:2")
             let previousCrash = await Block.findOne({"_id": {"$lt": ObjectId(responseCrash.id)}}).sort({"_id": -1}).limit(1)//get the previous record of the given id
-            console.log("previousCrash:", previousCrash.number);
+            console.log("previousCrash:", previousCrash);
             currentBlock = parseInt(previousCrash.number);
             currentBlock = currentBlock - 1;
             console.log("currentBlock:", currentBlock)
             if (crashTxn !== null) {
+                console.log("error:22")
                 let previousCrashTxn = await Transaction.findOne({"_id": {"$lt": ObjectId(crashTxn.id)}}).sort({"_id": -1}).limit(1)//get the previous record of the given id
                 currentBlock = parseInt(previousCrashTxn.blockNumber);
                 currentBlock = currentBlock - 1;
+                console.log("currentBlock:", currentBlock)
                 await Block.deleteMany({$or: [{number: {$gt: currentBlock}}, {hash: ""}]})
                 await Transaction.deleteMany({$or: [{blockNumber: {$gt: currentBlock}}, {blockHash: ""}]})
+                console.log("error:222")
             }
+            console.log("error:23")
             await Block.deleteMany({$or: [{number: {$gt: currentBlock}}, {hash: ""}]})
             await Transaction.deleteMany({$or: [{blockNumber: {$gt: currentBlock}}, {blockHash: ""}]})
+            console.log("error:24")
         } else {
-
+            console.log("error:3")
         }
         let latestBlock = await getBlock('latest')
         console.log("currentBlock", currentBlock)
         if (currentBlock < latestBlock.number) {
+            console.log("error:4")
             console.log("Downloading...")
             await downloadBlockChain(currentBlock + 1, latestBlock.number)
         } else if (currentBlock === latestBlock.number) {
+            console.log("error:5")
             console.log("Syncing...")
             await subscribeBlock();
             break;
         } else {
-
+            console.log("error:6")
         }
     }
 
