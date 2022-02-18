@@ -97,7 +97,17 @@ export const blockAndTransactionToDB = async (blockNumberOrBlockHash) => {
             await (async () => {
                 for (let transactionHash of transactionsArray) {
                     receipt = await getTransactionReceipt(transactionHash)
+                    if(!receipt?.transactionHash){
+                        console.log("fetching Receipt Again")
+                        receipt = await getTransactionReceipt(transactionHash)
+                    }
+                    console.log("receipt:", receipt.transactionHash)
                     let transaction = await getTransaction(transactionHash);
+                    if(transaction?.transactionHash){
+                        console.log("fetching Transaction Again")
+                        transaction = await getTransaction(transactionHash);
+                    }
+                    console.log("transaction:", transaction.transactionHash)
                     let newTransaction = new Transaction({
                         ...receipt,
                         value: transaction.value,
