@@ -85,8 +85,10 @@ export let blockAndTransactionToDB = async (blockNumberOrBlockHash) => {
         console.log("blockDownloaded:", block.number)
     } else {
         block = await getBlock(blockNumberOrBlockHash.toString());
-        console.log("blockReDownloaded:", block.number)
-        if(block?.number){}else{
+        console.log("blockReDownloading...")
+        if(block?.number){
+            console.log("blockReDownloaded", block.number)
+        }else{
             return false
         }
     }
