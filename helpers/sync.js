@@ -71,18 +71,24 @@ export const syncBlockChain = async () => {
 export const downloadBlockChain = async (fromBlockNumber, toBlockNumber) => {
     console.log("Downloading...")
     for (let i = fromBlockNumber; i <= toBlockNumber; i++) {
-        await blockAndTransactionToDB(i);
+        let response = await blockAndTransactionToDB(i);
+        if(!response){
+            process.exit(13936);
+        }
     }
 }
 
-export const blockAndTransactionToDB = async (blockNumberOrBlockHash) => {
+export let blockAndTransactionToDB = async (blockNumberOrBlockHash) => {
     console.log("Downloading:", blockNumberOrBlockHash)
     let block = await getBlock(blockNumberOrBlockHash.toString());
     if (block) {
         console.log("blockDownloaded:", block.number)
     } else {
         block = await getBlock(blockNumberOrBlockHash.toString());
-        console.log("blockReDownloaded:", blockNumberOrBlockHash)
+        console.log("blockReDownloaded:", block.number)
+        if(block?.number){}else{
+            return false
+        }
     }
     let newBlock = new Block;
     newBlock = {
@@ -135,6 +141,8 @@ export const blockAndTransactionToDB = async (blockNumberOrBlockHash) => {
     console.log("blockFromBD:", blockReturn.number);
     if (blockReturn.hash === "") {
         process.exit(13936);
+    }else{
+        return true
     }
 }
 

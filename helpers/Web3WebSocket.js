@@ -28,7 +28,13 @@ export const subscribeBlock=async ()=>{
         .on("data", function(blockHeader){
             console.log("blockHeader:",blockHeader);
             (async()=>{
-                await blockAndTransactionToDB(blockHeader.number);
+                let response = await blockAndTransactionToDB(blockHeader.number);
+                if(!response){
+                    let response = await blockAndTransactionToDB(blockHeader.number);
+                    if(!response){
+                        process.exit(13936);
+                    }
+                }
             })()
         })
         .on("error", console.error);
